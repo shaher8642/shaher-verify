@@ -56,8 +56,15 @@ interface Stats {
 
 const emptyForm = {
   fullName: "",
+  nameEn: "",
   idNumber: "",
   nationality: "",
+  nationalityEn: "",
+  employer: "",
+  doctorName: "",
+  doctorNameEn: "",
+  specialty: "",
+  specialtyEn: "",
   docType: DOC_TYPE_OPTIONS[0],
   docTitle: "",
   issueDate: "",
@@ -122,8 +129,15 @@ export default function AdminView({
     setEditing(doc);
     setForm({
       fullName: doc.fullName,
+      nameEn: doc.nameEn || "",
       idNumber: doc.idNumber,
       nationality: doc.nationality || "",
+      nationalityEn: doc.nationalityEn || "",
+      employer: doc.employer || "",
+      doctorName: doc.doctorName || "",
+      doctorNameEn: doc.doctorNameEn || "",
+      specialty: doc.specialty || "",
+      specialtyEn: doc.specialtyEn || "",
       docType: doc.docType,
       docTitle: doc.docTitle || "",
       issueDate: doc.issueDate.slice(0, 10),
@@ -137,7 +151,7 @@ export default function AdminView({
 
   async function save() {
     if (!form.fullName.trim() || !form.idNumber.trim() || !form.issueDate) {
-      setFormError("الرجاء تعبئة الحقول المطلوبة: الاسم، رقم الهوية، تاريخ الإصدار");
+      setFormError("الرجاء تعبئة الحقول المطلوبة: الاسم، رقم الهوية، تاريخ الدخول");
       return;
     }
     setSaving(true);
@@ -365,12 +379,26 @@ export default function AdminView({
           </DialogHeader>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
-            <div className="sm:col-span-2">
-              <Label>الاسم الكامل *</Label>
+            {/* بيانات المريض */}
+            <div className="sm:col-span-2 text-xs font-bold text-teal-800 bg-teal-50 rounded-md px-3 py-1.5 border border-teal-100">
+              بيانات المريض
+            </div>
+            <div>
+              <Label>الاسم الكامل (عربي) *</Label>
               <Input
                 value={form.fullName}
                 onChange={(e) => setForm({ ...form, fullName: e.target.value })}
-                placeholder="مثال: شاهر محمد أحمد"
+                placeholder="مثال: زيد جياش زيد الحارثي"
+              />
+            </div>
+            <div>
+              <Label>الاسم بالإنجليزية</Label>
+              <Input
+                dir="ltr"
+                className="text-left"
+                value={form.nameEn}
+                onChange={(e) => setForm({ ...form, nameEn: e.target.value })}
+                placeholder="ZIAD JAYASH ZAID AL HARTHY"
               />
             </div>
             <div>
@@ -381,14 +409,6 @@ export default function AdminView({
                 value={form.idNumber}
                 onChange={(e) => setForm({ ...form, idNumber: e.target.value.replace(/[^\d]/g, "") })}
                 placeholder="1234567890"
-              />
-            </div>
-            <div>
-              <Label>الجنسية</Label>
-              <Input
-                value={form.nationality}
-                onChange={(e) => setForm({ ...form, nationality: e.target.value })}
-                placeholder="مثال: سعودي / يمني"
               />
             </div>
             <div>
@@ -410,15 +430,38 @@ export default function AdminView({
               </Select>
             </div>
             <div>
-              <Label>عنوان الوثيقة / اسم الدورة</Label>
+              <Label>الجنسية (عربي)</Label>
               <Input
-                value={form.docTitle}
-                onChange={(e) => setForm({ ...form, docTitle: e.target.value })}
-                placeholder="مثال: دورة أساسيات البرمجة"
+                value={form.nationality}
+                onChange={(e) => setForm({ ...form, nationality: e.target.value })}
+                placeholder="مثال: السعودية"
               />
             </div>
             <div>
-              <Label>تاريخ الإصدار *</Label>
+              <Label>الجنسية (إنجليزي) — اختياري</Label>
+              <Input
+                dir="ltr"
+                className="text-left"
+                value={form.nationalityEn}
+                onChange={(e) => setForm({ ...form, nationalityEn: e.target.value })}
+                placeholder="Saudi Arabia (يُستنتج تلقائياً إن تُرك فارغاً)"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>جهة العمل</Label>
+              <Input
+                value={form.employer}
+                onChange={(e) => setForm({ ...form, employer: e.target.value })}
+                placeholder="مثال: شركة دراتنا — إدارة الأصول"
+              />
+            </div>
+
+            {/* بيانات الإجازة */}
+            <div className="sm:col-span-2 text-xs font-bold text-teal-800 bg-teal-50 rounded-md px-3 py-1.5 border border-teal-100 mt-2">
+              بيانات الإجازة / الوثيقة
+            </div>
+            <div>
+              <Label>تاريخ الدخول (الإصدار) *</Label>
               <Input
                 type="date"
                 dir="ltr"
@@ -428,13 +471,65 @@ export default function AdminView({
               />
             </div>
             <div>
-              <Label>تاريخ الانتهاء (اختياري)</Label>
+              <Label>تاريخ الخروج (الانتهاء)</Label>
               <Input
                 type="date"
                 dir="ltr"
                 className="text-left"
                 value={form.expiryDate}
                 onChange={(e) => setForm({ ...form, expiryDate: e.target.value })}
+              />
+            </div>
+            <div className="sm:col-span-2 text-[11px] text-slate-500 -mt-2">
+              تاريخ إصدار الإذن يُسجّل تلقائياً بتاريخ اليوم، ومدة الإجازة تُحسب تلقائياً (ميلادي + هجري)
+            </div>
+
+            {/* البيانات الطبية */}
+            <div className="sm:col-span-2 text-xs font-bold text-teal-800 bg-teal-50 rounded-md px-3 py-1.5 border border-teal-100 mt-2">
+              البيانات الطبية
+            </div>
+            <div>
+              <Label>اسم الطبيب (عربي)</Label>
+              <Input
+                value={form.doctorName}
+                onChange={(e) => setForm({ ...form, doctorName: e.target.value })}
+                placeholder="مثال: د. سعيد صالح اليامي"
+              />
+            </div>
+            <div>
+              <Label>اسم الطبيب (إنجليزي)</Label>
+              <Input
+                dir="ltr"
+                className="text-left"
+                value={form.doctorNameEn}
+                onChange={(e) => setForm({ ...form, doctorNameEn: e.target.value })}
+                placeholder="DR. SAEED SALEH AL-YAMI"
+              />
+            </div>
+            <div>
+              <Label>التخصص (عربي)</Label>
+              <Input
+                value={form.specialty}
+                onChange={(e) => setForm({ ...form, specialty: e.target.value })}
+                placeholder="مثال: باطنية / عام"
+              />
+            </div>
+            <div>
+              <Label>التخصص (إنجليزي)</Label>
+              <Input
+                dir="ltr"
+                className="text-left"
+                value={form.specialtyEn}
+                onChange={(e) => setForm({ ...form, specialtyEn: e.target.value })}
+                placeholder="General"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <Label>عنوان الوثيقة / اسم الدورة (اختياري)</Label>
+              <Input
+                value={form.docTitle}
+                onChange={(e) => setForm({ ...form, docTitle: e.target.value })}
+                placeholder="مثال: دورة أساسيات البرمجة"
               />
             </div>
             <div>

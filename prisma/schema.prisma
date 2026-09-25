@@ -12,12 +12,19 @@ model Document {
   id         String    @id @default(cuid())
   refNumber  String    @unique // الرقم المرجعي للوثيقة
   fullName   String // الاسم الكامل
+  nameEn     String? // الاسم بالإنجليزية
   idNumber   String // رقم الهوية / الإقامة
   nationality String?
+  nationalityEn String? // الجنسية بالإنجليزية
+  employer   String? // جهة العمل
+  doctorName String? // اسم الطبيب
+  doctorNameEn String? // اسم الطبيب بالإنجليزية
+  specialty  String? // التخصص الطبي
+  specialtyEn String? // التخصص بالإنجليزية
   docType    String // نوع الوثيقة
   docTitle   String? // عنوان الوثيقة / اسم الدورة
-  issueDate  DateTime // تاريخ الإصدار
-  expiryDate DateTime? // تاريخ الانتهاء
+  issueDate  DateTime // تاريخ الدخول / الإصدار
+  expiryDate DateTime? // تاريخ الخروج / الانتهاء
   status     String    @default("سارية") // سارية | منتهية | ملغاة
   notes      String?
   createdAt  DateTime  @default(now())

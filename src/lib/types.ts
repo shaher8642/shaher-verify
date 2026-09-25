@@ -2,8 +2,15 @@ export interface DocumentRecord {
   id: string;
   refNumber: string;
   fullName: string;
+  nameEn?: string | null;
   idNumber: string;
   nationality?: string | null;
+  nationalityEn?: string | null;
+  employer?: string | null;
+  doctorName?: string | null;
+  doctorNameEn?: string | null;
+  specialty?: string | null;
+  specialtyEn?: string | null;
   docType: string;
   docTitle?: string | null;
   issueDate: string;
@@ -15,12 +22,13 @@ export interface DocumentRecord {
 }
 
 export const DOC_TYPE_OPTIONS = [
+  "إجازة مرضية",
+  "تقرير طبي",
+  "شهادة لياقة طبية",
   "شهادة إتمام دورة تدريبية",
   "شهادة حضور ورشة عمل",
-  "شهادة عضوية",
   "خطاب تعريف",
   "وثيقة تسليم واستلام",
-  "شهادة خبرة عمل",
 ];
 
 export const STATUS_OPTIONS = ["سارية", "منتهية", "ملغاة"];
